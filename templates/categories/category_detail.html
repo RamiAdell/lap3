@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - ProductStore{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Category Header -->
+    <div class="bg-white bg-opacity-10 backdrop-blur-md rounded-xl overflow-hidden mb-8">
+        <div class="relative">
+            {% if category.image %}
+            <div class="h-64 md:h-80">
+                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
+            </div>
+            {% else %}
+            <div class="h-64 md:h-80 bg-gradient-to-br from-blue-500 to-purple-600 relative">
+                <div class="absolute inset-0 flex items-center justify-center text-white text-8xl opacity-30">
+                    📦
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
+            </div>
+            {% endif %}
+            <div class="absolute bottom-0 left-0 right-0 p-8">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">{{ category.name }}</h1>
+                    <p class="text-xl text-gray-200 mb-4">{{ category.description }}</p>
+                    <div class="flex flex-wrap gap-4 justify-center items-center">
+                        <span class="px-4 py-2 bg-white bg-opacity-20 rounded-lg text-white">
+                            <span class="font-bold">{{ products|length }}</span> Products
+                        </span>
+                        <span class="px-4 py-2 bg-white bg-opacity-20 rounded-lg text-white">
+                            Created {{ category.created_at|date:"F j, Y" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Bar -->
+    <div class="flex flex-wrap gap-4 justify-between items-center mb-8">
+        <div class="flex gap-4">
+            <a href="{% url 'categories:category_update' category.pk %}" 
+               class="inline-flex items-center px-4 py-2 bg-yellow-500 bg-opacity-20 hover:bg-opacity-30 text-yellow-300 rounded-lg transition duration-300">
+                <span class="mr-2">✏️</span> Edit Category
+            </a>
+            <a href="{% url 'categories:category_delete' category.pk %}" 
+               class="inline-flex items-center px-4 py-2 bg-red-500 bg-opacity-20 hover:bg-opacity-30 text-red-300 rounded-lg transition duration-300">
+                <span class="mr-2">🗑️</span> Delete Category
+            </a>
+        </div>
+        <a href="{% url 'products:product_create' %}" 
+           class="inline-flex items-center px-4 py-2 bg-blue-600 bg-opacity-80 hover:bg-opacity-100 text-white rounded-lg transition duration-300">
+            <span class="mr-2">➕</span> Add Product
+        </a>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="mb-6">
+        <h2 class="text-3xl font-bold text-white mb-6">Products in this Category</h2>
+        
+        {% if products %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for product in products %}
+            <div class="bg-white bg-opacity-10 backdrop-blur-md rounded-xl overflow-hidden hover:transform hover:scale-105 transition duration-300">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
+                {% else %}
+                <div class="w-full h-48 bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center">
+                    <span class="text-white text-5xl">📦</span>
+                </div>
+                {% endif %}
+                
+                <div class="p-4">
+                    <h3 class="text-xl font-semibold text-white mb-2">{{ product.name }}</h3>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-2xl text-blue-300 font-bold">${{ product.price }}</span>
+                        <span class="px-3 py-1 {% if product.instock > 0 %}bg-green-500{% else %}bg-red-500{% endif %} bg-opacity-20 rounded-full text-sm {% if product.instock > 0 %}text-green-300{% else %}text-red-300{% endif %}">
+                            {% if product.instock > 0 %}
+                                In Stock: {{ product.instock }}
+                            {% else %}
+                                Out of Stock
+                            {% endif %}
+                        </span>
+                    </div>
+                    <p class="text-gray-300 text-sm mb-4">{{ product.description|truncatewords:15 }}</p>
+                    <div class="flex justify-between items-center">
+                        <a href="{% url 'products:product_detail' product.pk %}" class="text-blue-300 hover:text-blue-400 transition duration-300">
+                            View Details →
+                        </a>
+                        <div class="flex gap-2">
+                            <a href="{% url 'products:product_update' product.pk %}" class="text-yellow-300 hover:text-yellow-400">
+                                ✏️
+                            </a>
+                            <a href="{% url 'products:product_delete' product.pk %}" class="text-red-300 hover:text-red-400">
+                                🗑️
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 bg-white bg-opacity-10 backdrop-blur-md rounded-xl">
+            <div class="text-6xl mb-4">📦</div>
+            <h3 class="text-2xl font-bold text-white mb-2">No Products Yet</h3>
+            <p class="text-gray-400 mb-6">This category doesn't have any products yet.</p>
+            <a href="{% url 'products:product_create' %}" 
+               class="inline-flex items-center px-6 py-3 bg-blue-600 bg-opacity-80 hover:bg-opacity-100 text-white font-semibold rounded-lg transition duration-300">
+                <span class="mr-2">➕</span> Add First Product
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

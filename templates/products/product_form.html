@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - ProductStore{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-8 mb-12 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-black/50 to-black/10"></div>
+    <!-- Decorative elements -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full filter blur-3xl opacity-20 -mr-32 -mt-32"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500 rounded-full filter blur-3xl opacity-20 -ml-32 -mb-32"></div>
+    
+    <div class="relative z-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">{{ title }}</h1>
+        <p class="text-xl text-gray-300">Fill in the details below to add a new product to our store</p>
+    </div>
+</div>
+
+<div class="max-w-2xl mx-auto">
+    <form method="post" enctype="multipart/form-data" class="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">
+        {% csrf_token %}
+            
+            <div class="space-y-6">
+                <!-- Product Name -->
+                <div>
+                    <label class="block text-white text-sm font-semibold mb-2">📝 Product Name *</label>
+                    <input type="text" name="name" required
+                           class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-indigo-500 transition duration-300"
+                           placeholder="Enter product name">
+                </div>
+
+                <!-- Product Code -->
+                <div>
+                    <label class="block text-white text-sm font-semibold mb-2">🏷️ Product Code *</label>
+                    <input type="text" name="code" required
+                           class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-indigo-500 transition duration-300"
+                           placeholder="Enter unique product code">
+                    <p class="mt-1 text-sm text-gray-400">This must be unique across all products</p>
+                </div>
+
+                <!-- Price and Stock -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-white text-sm font-semibold mb-2">💰 Price *</label>
+                        <input type="number" name="price" required step="0.01"
+                               class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-indigo-500 transition duration-300"
+                               placeholder="0.00">
+                    </div>
+                    <div>
+                        <label class="block text-white text-sm font-semibold mb-2">📦 Items in Stock *</label>
+                        <input type="number" name="instock" required
+                               class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-indigo-500 transition duration-300"
+                               placeholder="0">
+                    </div>
+                </div>
+
+                <!-- Product Image -->
+                <div>
+                    <label class="block text-white text-sm font-semibold mb-2">🖼️ Product Image</label>
+                    <input type="file" name="image" accept="image/*"
+                           class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 transition duration-300">
+                    <p class="mt-1 text-sm text-gray-400">Upload a high-quality image of your product (optional)</p>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-white text-sm font-semibold mb-2">📄 Description</label>
+                    <textarea name="description" rows="4"
+                             class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-indigo-500 transition duration-300"
+                             placeholder="Enter product description"></textarea>
+                    <p class="mt-1 text-sm text-gray-400">Describe your product in detail (optional)</p>
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label class="block text-white text-sm font-semibold mb-2">📑 Category</label>
+                    <select name="category"
+                            class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-indigo-500 transition duration-300">
+                        <option value="">Select a category</option>
+                        {% for category in form.category.field.queryset %}
+                            <option value="{{ category.pk }}" 
+                                    {% if form.category.value|stringformat:"s" == category.pk|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <p class="mt-1 text-sm text-gray-400">Choose a category for your product (optional)</p>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-center gap-4 mt-8">
+                    <a href="{% url 'products:product_list' %}" 
+                       class="px-6 py-2 bg-gray-500 bg-opacity-20 hover:bg-opacity-30 text-gray-300 rounded-lg transition duration-300 flex items-center gap-2">
+                        <span>❌</span> Cancel
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg transition duration-300 flex items-center gap-2">
+                        <span>✅</span> Save Product
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

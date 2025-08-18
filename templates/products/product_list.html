@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Products - ProductStore{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <div class="relative bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-8 mb-12 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-black/50 to-black/10"></div>
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full filter blur-3xl opacity-20 -mr-32 -mt-32"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500 rounded-full filter blur-3xl opacity-20 -ml-32 -mb-32"></div>
+        
+        <div class="relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">🛍️ Our Products</h1>
+                    <p class="text-xl text-gray-300">Discover amazing products at great prices</p>
+                </div>
+                <a href="{% url 'products:product_create' %}" 
+                   class="group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 transform hover:scale-105 flex items-center gap-2">
+                    <span class="text-2xl">➕</span>
+                    <span>Add Product</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if products %}
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {% for product in products %}
+        <div class="group bg-white bg-opacity-10 backdrop-blur-md rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
+            <!-- Product Image -->
+            <div class="relative h-48 overflow-hidden">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                {% else %}
+                <div class="w-full h-full bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center">
+                    <span class="text-6xl">📦</span>
+                </div>
+                {% endif %}
+                <!-- Price Tag -->
+                <div class="absolute top-4 right-4 bg-black bg-opacity-75 text-white px-4 py-2 rounded-full font-bold">
+                    ${{ product.price }}
+                </div>
+            </div>
+
+            <!-- Product Content -->
+            <div class="p-6">
+                <!-- Category Badge -->
+                {% if product.category %}
+                <a href="{% url 'categories:category_detail' product.category.pk %}" 
+                   class="inline-block px-3 py-1 bg-blue-500 bg-opacity-20 text-blue-300 rounded-full text-sm mb-4 hover:bg-opacity-30 transition duration-300">
+                    📑 {{ product.category.name }}
+                </a>
+                {% else %}
+                <span class="inline-block px-3 py-1 bg-gray-500 bg-opacity-20 text-gray-400 rounded-full text-sm mb-4">
+                    📑 Uncategorized
+                </span>
+                {% endif %}
+
+                <!-- Title & Description -->
+                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-indigo-300 transition duration-300">
+                    {{ product.name }}
+                </h3>
+                <p class="text-gray-300 mb-4 line-clamp-2">{{ product.description }}</p>
+
+                <!-- Stock Status -->
+                <div class="mb-4">
+                    {% if product.instock == 0 %}
+                    <span class="px-3 py-1 bg-red-500 bg-opacity-20 text-red-300 rounded-full text-sm">
+                        Out of Stock
+                    </span>
+                    {% elif product.instock < 10 %}
+                    <span class="px-3 py-1 bg-yellow-500 bg-opacity-20 text-yellow-300 rounded-full text-sm">
+                        Only {{ product.instock }} left
+                    </span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-green-500 bg-opacity-20 text-green-300 rounded-full text-sm">
+                        In Stock: {{ product.instock }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                    <a href="{% url 'products:product_detail' product.pk %}" 
+                       class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 bg-opacity-20 hover:bg-opacity-30 text-indigo-300 rounded-lg transition duration-300">
+                        <span>👁️</span> View Details
+                    </a>
+                    <a href="{% url 'products:product_delete' product.pk %}" 
+                       class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-500 bg-opacity-20 hover:bg-opacity-30 text-red-300 rounded-lg transition duration-300">
+                        <span>🗑️</span> Delete
+                    </a>
+                </div>
+
+                <!-- Meta Info -->
+                <div class="mt-4 pt-4 border-t border-white border-opacity-10 flex justify-between text-sm text-gray-400">
+                    <span>Code: {{ product.code }}</span>
+                    <span>{{ product.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-16 bg-white bg-opacity-10 backdrop-blur-md rounded-xl">
+        <div class="text-7xl mb-4 animate-bounce">📦</div>
+        <h3 class="text-2xl font-bold text-white mb-2">No Products Yet</h3>
+        <p class="text-gray-400 mb-6">Be the first to add a product to our store!</p>
+        <a href="{% url 'products:product_create' %}" 
+           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg transition duration-300">
+            <span class="mr-2">➕</span> Add Your First Product
+        </a>
+    </div>
+    {% endif %}
+{% endblock %}
+ 
