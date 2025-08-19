@@ -2,6 +2,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Category
 from .forms import CategoryForm
 from products.models import Product
@@ -20,21 +21,23 @@ class CategoryDetailView(DetailView):
         context['products'] = Product.objects.filter(category=self.object)
         return context
 
-class CategoryCreateView(SuccessMessageMixin, CreateView):
+class CategoryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'categories/category_form.html'
     success_url = reverse_lazy('categories:category_list')
     success_message = "Category '%(name)s' was created successfully"
+    login_url = 'login'
 
-class CategoryUpdateView(SuccessMessageMixin, UpdateView):
+class CategoryUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     template_name = 'categories/category_form.html'
     success_url = reverse_lazy('categories:category_list')
     success_message = "Category '%(name)s' was updated successfully"
+    login_url = 'login'
 
-class CategoryDeleteView(SuccessMessageMixin, DeleteView):
+class CategoryDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Category
     template_name = 'categories/category_confirm_delete.html'
     success_url = reverse_lazy('categories:category_list')

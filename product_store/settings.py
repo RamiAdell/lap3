@@ -128,6 +128,11 @@ STATICFILES_DIRS = [
 if not os.path.exists(BASE_DIR / 'staticfiles'):
     os.makedirs(BASE_DIR / 'staticfiles')
 
+# Authentication settings
+LOGIN_REDIRECT_URL = 'products:product_list'
+LOGOUT_REDIRECT_URL = 'products:product_list'
+LOGIN_URL = 'login'
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

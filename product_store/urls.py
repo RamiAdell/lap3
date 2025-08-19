@@ -19,11 +19,15 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
+from .views import RegisterView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('products/', include('products.urls')),
     path('categories/', include('categories.urls')),
+    # Authentication URLs
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('register/', RegisterView.as_view(), name='register'),
     # Add homepage redirect to products list
     path('', RedirectView.as_view(url='/products/', permanent=True)),
 ]
