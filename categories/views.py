@@ -7,12 +7,14 @@ from .models import Category
 from .forms import CategoryForm
 from products.models import Product
 
-class CategoryListView(ListView):
+
+
+class CategoryListView(ListView): 
     model = Category
     template_name = 'categories/category_list.html'
     context_object_name = 'categories'
 
-class CategoryDetailView(DetailView):
+class CategoryDetailView(DetailView): # get method parameters id /detail
     model = Category
     template_name = 'categories/category_detail.html'
 
@@ -20,6 +22,7 @@ class CategoryDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['products'] = Product.objects.filter(category=self.object)
         return context
+
 
 class CategoryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Category
@@ -37,12 +40,8 @@ class CategoryUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = "Category '%(name)s' was updated successfully"
     login_url = 'login'
 
-class CategoryDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     template_name = 'categories/category_confirm_delete.html'
     success_url = reverse_lazy('categories:category_list')
-    success_message = "Category was deleted successfully"
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
-        return super().delete(request, *args, **kwargs)

@@ -13,7 +13,7 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse('categories:category_detail', kwargs={'pk': self.pk})
-
+# /categories/1
     class Meta:
         verbose_name_plural = 'Categories'
         ordering = ['name']
